@@ -6,16 +6,11 @@ import sys
 from dataconsumer import DataConsumerFactory
 from databodyproducer import HailBodyProducer, VehicleBodyProducer, RideBodyProducer
 
-from twisted.internet.defer import succeed
 from twisted.internet.protocol import ClientFactory, Protocol
 from twisted.internet.task import LoopingCall
-from twisted.python import filepath
 from twisted.python import log
 from twisted.web.client import Agent
-from twisted.web.client import HTTPClientFactory
-from twisted.web.http import HTTPClient
 from twisted.web.http_headers import Headers
-from twisted.web.iweb import IBodyProducer
 
 from zope.interface import implements
 
@@ -47,7 +42,7 @@ def consume(filepath, uri, host, port, data_body_producer):
     reactor.connectTCP(host, int(port), factory)
     log.msg('Consuming data from {!s} and alerting {!s}.'.format(filepath, uri))
 
-if __name__ == '__main__':
+def main():
     args = parse_args()
     log.startLogging(args.log)
     uri = 'http://{!s}:{!s}/{{!s}}'.format(args.HOST, args.PORT)
@@ -60,3 +55,6 @@ if __name__ == '__main__':
         args.RIDES, uri.format('rides'), args.HOST, args.PORT, RideBodyProducer)
     from twisted.internet import reactor
     reactor.run()
+
+if __name__ == '__main__':
+    main()
