@@ -1,3 +1,5 @@
+import time
+
 from twisted.python import log
 
 class Hail(object):
@@ -36,6 +38,12 @@ class Hail(object):
     def cancel(self, timestamp):
         self.status = Hail.CANCELLED
         self.cancel_time = timestamp
+
+    def waittime(self):
+        if self.pickup_time == None:
+            return int(time.time()) - self.hail_time
+        else:
+            return self.pickup_time - self.hail_time
 
     def fields(self):
         """Queryable fields that can be sent back to the user. None fields are

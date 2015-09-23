@@ -16,12 +16,10 @@ class RideResource(Resource):
     def render_POST(self, request):
         body = json.loads(request.content.readlines()[0])
         ride_id = body['id']
-        hail_id = body['hail_id']
-        vehicle_id = body['vehicle_id']
         timestamp = int(body['timestamp'])
-        hail = self.population.hails[hail_id]
-        vehicle = self.population.vehicles[vehicle_id]
-        if not ride_id in self.population.rides:
+        if not ride_id in self.population.rides and body['operation'] == 'pickup':
+            hail = self.population.hails[body['hail_id']]
+            vehicle = self.population.vehicles[body['vehicle_id']]
             self.population.rides[ride_id] = Ride(ride_id, hail, vehicle)
         ride = self.population.rides[ride_id]
         response = { 'success': True }

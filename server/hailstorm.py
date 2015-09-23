@@ -9,10 +9,13 @@ from population import Population
 from vehicle import Vehicle
 
 from hailresource import HailResource
-from hailmetricsresource import HailMetricsResource
 from rideresource import RideResource
 from vehicleresource import VehicleResource
+
+from hailmetricsresource import HailMetricsResource
 from vehiclemetricsresource import VehicleMetricsResource
+
+from projectedwaitresource import ProjectedWaitResource
 
 from twisted.python import log
 from twisted.web.server import Site
@@ -30,10 +33,10 @@ I store hail data and provide an HTTP API."""
     return parser.parse_args()
 
 class Hailstorm(Resource):
-    def getChild(self, path, request):
-        print 'wow ok'
-        print path
-        print request
+    pass
+
+class Status(Resource):
+    pass
 
 def main():
     """Sets up the structure of the HTTP API in terms of resources as nodes in
@@ -58,6 +61,9 @@ def main():
         'available', VehicleMetricsResource(population, Vehicle.AVAILABLE))
     vehicles.putChild(
         'transit', VehicleMetricsResource(population, Vehicle.TRANSIT))
+    status = Status()
+    root.putChild('status', status)
+    status.putChild('projectedwait', ProjectedWaitResource(population))
 
     from twisted.internet import reactor    
     reactor.listenTCP(int(args.port), Site(root))

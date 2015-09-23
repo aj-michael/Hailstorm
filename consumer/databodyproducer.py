@@ -69,10 +69,10 @@ class RideBodyProducer(DataBodyProducer):
         body = {}
         body['timestamp'] = data[1]
         body['id'] = data[2]
-        body['hail_id'] = data[3]
-        body['vehicle_id'] = data[4]
         if data[0] == 'Ride pickup':
             body['operation'] = 'pickup'
+            body['hail_id'] = data[3]
+            body['vehicle_id'] = data[4]
         elif data[0] == 'Ride dropoff':
             body['operation'] = 'dropoff'
         return json.dumps(body)
