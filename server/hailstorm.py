@@ -15,6 +15,8 @@ from vehicleresource import VehicleResource
 from hailmetricsresource import HailMetricsResource
 from vehiclemetricsresource import VehicleMetricsResource
 
+from pasthourhailsresource import PastHourHailsResource
+from projectedhailsresource import ProjectedHailsResource
 from projectedwaitresource import ProjectedWaitResource
 
 from twisted.python import log
@@ -48,9 +50,11 @@ def main():
     hails = HailResource(population)
     vehicles = VehicleResource(population)
     rides = RideResource(population)
+    status = Status()
     root.putChild('hails', hails)
-    root.putChild('vehicles', vehicles)
     root.putChild('rides', rides)
+    root.putChild('status', status)
+    root.putChild('vehicles', vehicles)
     hails.putChild('waiting', HailMetricsResource(population, Hail.WAITING))
     hails.putChild('transit', HailMetricsResource(population, Hail.TRANSIT))
     hails.putChild('arrived', HailMetricsResource(population, Hail.ARRIVED))
@@ -61,10 +65,9 @@ def main():
         'available', VehicleMetricsResource(population, Vehicle.AVAILABLE))
     vehicles.putChild(
         'transit', VehicleMetricsResource(population, Vehicle.TRANSIT))
-    status = Status()
-    root.putChild('status', status)
+    status.putChild('projectedhails', ProjectedHailsResource(population))
     status.putChild('projectedwait', ProjectedWaitResource(population))
-
+    status.putChild('pasthourhails', PastHourHailsResource(population))
     from twisted.internet import reactor    
     reactor.listenTCP(int(args.port), Site(root))
     log.msg('Starting hailstorm server on port {!s}'.format(args.port))

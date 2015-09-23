@@ -93,3 +93,15 @@ To see all vehicles:
 To see vechiles by status:
 
 `wget -qO- http://127.0.0.1:12347/vehicles/{offline,available,transit}`
+
+To see the hails in the past hour, broken down by status:
+
+`wget -qO- http://127.0.0.1:12347/status/pasthourhails`
+
+To see the project hails for the next hour:
+
+`wget -qO- http://127.0.0.1:12347/status/projectedhails`
+
+To see the projected wait time for the next hour:
+
+`wget -qO- http://127.0.0.1:12347/status/projectedwait`
