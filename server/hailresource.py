@@ -2,27 +2,27 @@
 
 import json
 
+from hail import Hail
+
 from twisted.web.resource import Resource
 
 class HailResource(Resource):
     isLeaf = True
 
-    def __init__(self):
-        self.passengers = []
+    def __init__(self, population):
+        self.population = population
 
-    def render(self, request):
+    def render_POST(self, request):
         body = json.loads(request.content.readlines()[0])
-        print "Here with"
-        print body
-        operations = { 'POST': 'create',
-                       'GET': 'read',
-                       'PUT': 'update',
-                       'DELETE': 'delete' }
-        if request.method not in operations: 
-            response = {
-                'success': False,
-                'error': 'InvalidRequestMethod',
-                'error_message': ("Valid request methods: %s" % (', '.join(operations.keys))) }
-        else:
-            response = { 'success': True }
+        hail_id = body['id']
+        timestamp = int(body['timestamp'])
+        print body.keys()
+        if body['operation'] == 'hail':
+            latitude = float(body['latitude'])
+            longitude = float(body['longitude'])
+            self.population.hails[hail_id] = Hail(
+                hail_id, timestamp, latitude, longitude)
+        elif body['operation'] == 'cancel':
+            self.population.hails[hail_id].cancel(timestamp)
+        response = { 'success': True }
         return json.dumps(response)

@@ -37,11 +37,11 @@ class HailBodyProducer(DataBodyProducer):
         body = {}
         body['timestamp'] = data[1]
         body['id'] = data[2]
-        body['latitude'] = data[3]
-        body['longitude'] = data[4]
-        if data == 'New hail':
+        if data[0] == 'New hail':
+            body['latitude'] = data[3]
+            body['longitude'] = data[4]
             body['operation'] = 'hail'
-        elif data == 'Cancelled hail':
+        elif data[0] == 'Cancelled hail':
             body['operation'] = 'cancel'
         return json.dumps(body)
 
@@ -51,12 +51,12 @@ class VehicleBodyProducer(DataBodyProducer):
 
     def parse(self, line):
         data = line.rstrip().split('\t')
-        body = []
+        body = {}
         body['timestamp'] = data[1]
         body['id'] = data[2]
-        if data == 'Vehicle online':
+        if data[0] == 'Vehicle online':
             body['operation'] = 'online'
-        elif data == 'Vehicle offline':
+        elif data[0] == 'Vehicle offline':
             body['operation'] = 'offline'
         return json.dumps(body)
 
@@ -66,12 +66,13 @@ class RideBodyProducer(DataBodyProducer):
 
     def parse(self, line):
         data = line.rstrip().split('\t')
-        body = []
+        body = {}
         body['timestamp'] = data[1]
-        body['passenger_id'] = data[2]
-        body['vehicle_id'] = data[3]
-        if data == 'Pickup':
+        body['id'] = data[2]
+        body['hail_id'] = data[3]
+        body['vehicle_id'] = data[4]
+        if data[0] == 'Pickup':
             body['operation'] = 'pickup'
-        elif data == 'Drop off':
+        elif data[0] == 'Drop off':
             body['operation'] = 'dropoff'
         return json.dumps(body)
